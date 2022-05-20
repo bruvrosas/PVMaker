@@ -12,6 +12,11 @@ module.exports = {
             fontFamily: {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
             },
+            colors:{
+                /*'PVblue': '#D9E2E2',*/
+                'PVblue': '#a3bbbf',
+                'PVred': '#C63B3B',
+            }
         },
     },
 
