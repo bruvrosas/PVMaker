@@ -1,3 +1,11 @@
+{{--
+Auteur: Bruno Manuel Vieira Rosas
+Date: 20.05.2022
+Description: Register page
+--}}
+
+{{-- Breeze's default register page slightly modified and translated --}}
+
 <x-guest-layout>
     <x-auth-card>
         <x-slot name="logo">

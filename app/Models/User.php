@@ -1,5 +1,11 @@
 <?php
+/*
+Auteur: Bruno Manuel Vieira Rosas
+Date: 19.05.2022
+Description: User model
 
+Default user model, added folders() function
+*/
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;

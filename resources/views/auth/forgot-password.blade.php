@@ -1,3 +1,11 @@
+{{--
+Auteur: Bruno Manuel Vieira Rosas
+Date: 20.05.2022
+Description: Forgotten password page
+--}}
+
+{{-- Breeze's default forgotten password page translated --}}
+
 <x-guest-layout>
     <x-auth-card>
         <x-slot name="logo">

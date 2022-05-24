@@ -1,3 +1,11 @@
+{{--
+Auteur: Bruno Manuel Vieira Rosas
+Date: 20.05.2022
+Description: Login page
+--}}
+
+{{-- Breeze's default login page slightly modified and translated --}}
+
 <x-guest-layout>
     <x-auth-card>
         <x-slot name="logo">

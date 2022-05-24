@@ -1,5 +1,9 @@
 <?php
-
+/*
+Auteur: Bruno Manuel Vieira Rosas
+Date: 19.05.2022
+Description: Report model
+*/
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;

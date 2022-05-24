@@ -20,8 +20,8 @@ Route::resource('/reports', ReportController::class);
 // Static pages
 Route::get('/', function () {
     return view('index');
-});
-Route::view('/contact', 'contact');
+})->name('index');
+Route::view('/contact', 'contact')->name('contact');
 
 
 /*Route::get('/dashboard', function () {

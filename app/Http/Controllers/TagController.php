@@ -1,5 +1,9 @@
 <?php
-
+/*
+Auteur: Bruno Manuel Vieira Rosas
+Date: 19.05.2022
+Description: Tag resource controller
+*/
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;

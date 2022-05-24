@@ -1,6 +1,15 @@
+{{--
+Auteur: Bruno Manuel Vieira Rosas
+Date: 20.05.2022
+Description: Main webpage template
+--}}
+
+{{-- Inspired by Breeze's default app layout and my preparation project --}}
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        <!-- Metadata -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -18,19 +27,17 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-50">
-            {{--@include('layouts.navigation')--}}
-
-            <!-- Page Heading -->
-            <header class="fixed w-full z-10 hidden top-0 right-0 sm:block">
+            <!-- Page Header -->
+            <header class="fixed w-full z-10 top-0 right-0">
                 @include('layouts.header')
             </header>
-
             <!-- Page Content -->
             <main>
                 @yield('content')
             </main>
+            <!-- Page Footer -->
             <footer>
-                @include('layouts/footer')
+                @include('layouts.footer')
             </footer>
         </div>
     </body>
