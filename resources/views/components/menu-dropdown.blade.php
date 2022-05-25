@@ -19,7 +19,7 @@ Description: Hamburger menu
             <x-dropdown-link :href="route('index')" >
                 {{ __('Accueil') }}
             </x-dropdown-link>
-            <x-dropdown-link :href="route('index')" >
+            <x-dropdown-link :href="route('reports.create')" >
                 {{ __('Créer un PV') }}
             </x-dropdown-link>
             @if (Auth::check())

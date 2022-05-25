@@ -36,7 +36,7 @@ Description: Webpage Header
                 </li>
                 @if (Route::has('login'))
                     @auth
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                        <li class="relative group">@include('components.user-dropdown')</li>
                     @else
                         <li class="relative group"><a href="{{ route('login') }}" class="bg-PVred px-4 py-1 rounded-xl border-PVred border-2 text-white hover:bg-red-500 active:bg-PVred focus:ring focus:ring-red-500 focus:ring-opacity-25 outline-none">Login</a></li>
                         @if (Route::has('register'))
