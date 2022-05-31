@@ -13,7 +13,7 @@ Description: Homepage
                 </h1>
                 <h2 class="text-xl">L'outil de création de procès-verbaux.</h2>
                 <p>Vous pouvez en créer grâce au formulaire de la page "Créer un PV" et l'exporter au format PDF.</p>
-                <p>Si vous vous connectez, vous pourriez aussi stocker vos procès-verbaux en ligne organisés dans des dossiers<br>et filtrés par tags et les exporter en masse en fichier compressé.</p>
+                <p>Si vous vous connectez, vous pourriez aussi stocker vos procès-verbaux en ligne organisés dans des dossiers<br>ainsi que les filtrer par tags et les exporter en masse en fichier compressé.</p>
             </div>
         </div>
 @endsection

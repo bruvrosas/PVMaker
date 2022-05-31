@@ -4,21 +4,26 @@ Date: 24.05.2022
 Description: Report creation folder
 --}}
 
-{{-- Inspired by: https://tailwindcomponents.com/component/input-field --}}
+{{-- Form inspired by: https://tailwindcomponents.com/component/input-field --}}
+{{-- Tag select inspired by: https://codepen.io/oidre/pen/bGEbVXo --}}
+{{-- Dynamic field inspired by: https://codepen.io/sanjayojha/pen/qBONdVm --}}
 @extends('layouts/main')
 @section('content')
 <div class="relative inline-flex w-full min-h-screen h-full py-4 sm:pt-0">
     <div class="max-w-2xl mx-auto mt-32 p-16">
         <form action="{{ route('reports.store') }}" method="POST">
             @csrf
+            {{--Title--}}
             <div class="mb-6">
                 <label for="title" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Titre</label>
                 <input type="text" name="title" id="title" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             </div>
+            {{--Date--}}
             <div class="mb-6">
                 <label for="date" class="block mb-2 text-base font-semibold font-medium text-gray-900 dark:text-gray-300">Date</label>
                 <input type="date" name="date" id="date" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             </div>
+            {{--Time--}}
             <div class="grid gap-6 mb-6 lg:grid-cols-2">
                 <div>
                     <label for="start_time" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Heure de début</label>
@@ -29,6 +34,7 @@ Description: Report creation folder
                     <input type="time" name="end_time" id="end_time" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 </div>
             </div>
+            {{--Participants--}}
             <div x-data="participantsHandler()">
                 <table class="align-items-center mb-4">
                     <thead>
@@ -54,6 +60,7 @@ Description: Report creation folder
                     </tfoot>
                 </table>
             </div>
+            {{--Absents--}}
             <div x-data="absentsHandler()">
                 <table class="align-items-center mb-4">
                     <thead>
@@ -79,6 +86,7 @@ Description: Report creation folder
                     </tfoot>
                 </table>
             </div>
+            {{--Excused--}}
             <div x-data="excusedHandler()">
                 <table class="align-items-center mb-4">
                     <thead>
@@ -104,56 +112,106 @@ Description: Report creation folder
                     </tfoot>
                 </table>
             </div>
+            {{--Agenda--}}
             <div class="mb-6 prose">
-                <label for="excused" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Ordre du jour et points traités</label>
+                <label for="agenda" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Ordre du jour et points traités</label>
                 <textarea  name="agenda" id="report_editor" ></textarea>
-                {{--<input type="textarea" name="agenda" id="report_editor" class="">--}}
             </div>
-            <div>
                 @if (Route::has('login'))
                         @auth
+                            {{--Tags--}}
+                            <select x-cloak id="tags" class="hidden">
+                                @foreach($tags as $tag)
+                                    <option value="{{$tag->id}}">{{$tag->name}}</option>
+                                @endforeach
+                            </select>
+                            <div class="mb-6 prose">
+                                <label for="excused" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Tags</label>
+                                <div x-data="tagDropdown()" x-init="loadOptions()" class="w-full flex flex-col">
+                                  <input name="tags" type="hidden" x-bind:value="selectedValues()">
+                                  <div class="inline-block relative">
+                                    <div class="flex flex-col items-center relative">
+                                      <div x-on:click="open" class="w-full">
+                                        <div class="my-2 p-1 flex border border-gray-200 bg-white rounded">
+                                          <div class="flex flex-auto flex-wrap">
+                                            <template x-for="(option,index) in selected" :key="options[option].value">
+                                              <div class="flex justify-center items-center m-1 font-medium py-1 px-1 bg-white rounded bg-gray-100 border">
+                                                <div class="text-xs font-normal leading-none max-w-full flex-initial x-model=" options[option] x-text="options[option].text"></div>
+                                                <div class="flex flex-auto flex-row-reverse">
+                                                  <div x-on:click.stop="remove(index,option)" class="cursor-pointer">
+                                                    <span class="iconify" data-icon="charm:cross" data-width="20" data-height="20"></span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </template>
+                                            <div x-show="selected.length == 0" class="flex-1">
+                                              <input placeholder="Sélectionnez un(des) tag(s)" class="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800" x-bind:value="selectedValues()">
+                                            </div>
+                                          </div>
+                                          <div class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200 svelte-1l8159u">
+
+                                            <button type="button" x-show="isOpen() === true" x-on:click="open" class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
+                                              <span class="iconify" data-icon="ant-design:up-outlined" data-width="20" data-height="20"></span>
+                                            </button>
+                                            <button type="button" x-show="isOpen() === false" @click="close" class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none">
+                                              <span class="iconify" data-icon="ant-design:down-outlined" data-width="20" data-height="20"></span>
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div class="w-full px-4">
+                                        <div x-show.transition.origin.top="isOpen()" class="absolute shadow top-100 bg-white z-40 w-full left-0 rounded max-h-select" x-on:click.away="close">
+                                          <div class="flex flex-col w-full overflow-y-auto h-64">
+                                            <template x-for="(option,index) in options" :key="option" class="overflow-auto">
+                                              <div class="cursor-pointer w-full border-gray-100 rounded-t border-b hover:bg-gray-100" @click="select(index,$event)">
+                                                <div class="flex w-full items-center p-2 pl-2 border-transparent border-l-2 relative">
+                                                  <div class="w-full items-center flex justify-between">
+                                                    <div class="mx-2 leading-6" x-model="option" x-text="option.text"></div>
+                                                    <div x-show="option.selected">
+                                                      <span class="iconify" data-icon="charm:tick" data-width="20" data-height="20"></span>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </template>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                            {{--Folders--}}
+                            <div class="mb-6 prose">
+                                <label for="folder" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Dossier</label>
+                                <select id="folders" name="folder_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    @foreach($folders as $folder)
+                                        <option value="{{$folder->id}}">{{$folder->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <button type="submit" class="font-semibold bg-PVred px-4 py-1 rounded-md border-PVred border-2 text-white hover:bg-red-500 active:bg-PVred focus:ring focus:ring-red-500 focus:ring-opacity-25 outline-none">Enregistrer PV</button>
                         @else
                             <button type="submit" class="font-semibold bg-PVred px-4 py-1 rounded-md border-PVred border-2 text-white hover:bg-red-500 active:bg-PVred focus:ring focus:ring-red-500 focus:ring-opacity-25 outline-none">Télécharger PDF</button>
                         @endauth
                 @endif
-            </div>
         </form>
     </div>
 </div>
 
-{{-- <script src="node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script> --}}
+{{-- <script src="node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>--}}
 <script src="https://cdn.ckeditor.com/ckeditor5/34.0.0/classic/ckeditor.js"></script>
-<script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script>
 <script>
     function participantsHandler() {
         return {
             fields: [],
-            canAdd:true,
-            canDelete:true,
             addNewField() {
-                if (!this.canAdd)
-                {
-                    return;
-                }
-                this.canAdd = false;
-                setTimeout(()=>{
-                    this.canAdd=true;
-                    },100)
                 this.fields.push({
                 participant: ''
                 });
             },
             removeField(index) {
-                // M.Hayoz
-                if (!this.canDelete)
-                {
-                    return;
-                }
-                this.canDelete = false;
-                setTimeout(()=>{
-                    this.canDelete=true;
-                    },100)
                 this.fields.splice(index, 1);
                 }
         }
@@ -161,31 +219,12 @@ Description: Report creation folder
     function absentsHandler() {
         return {
             fields: [],
-            canAdd:true,
-            canDelete:true,
             addNewField() {
-                if (!this.canAdd)
-                {
-                    return;
-                }
-                this.canAdd = false;
-                setTimeout(()=>{
-                    this.canAdd=true;
-                    },100)
                 this.fields.push({
                 absent: ''
                 });
             },
             removeField(index) {
-                // M.Hayoz
-                if (!this.canDelete)
-                {
-                    return;
-                }
-                this.canDelete = false;
-                setTimeout(()=>{
-                    this.canDelete=true;
-                    },100)
                 this.fields.splice(index, 1);
                 }
         }
@@ -194,35 +233,75 @@ Description: Report creation folder
     function excusedHandler() {
         return {
             fields: [],
-            canAdd:true,
-            canDelete:true,
             addNewField() {
-                if (!this.canAdd)
-                {
-                    return;
-                }
-                this.canAdd = false;
-                setTimeout(()=>{
-                    this.canAdd=true;
-                    },100)
                 this.fields.push({
                 excused: ''
                 });
             },
             removeField(index) {
-                // M.Hayoz
-                if (!this.canDelete)
-                {
-                    return;
-                }
-                this.canDelete = false;
-                setTimeout(()=>{
-                    this.canDelete=true;
-                    },100)
                 this.fields.splice(index, 1);
                 }
         }
     }
+
+    function tagDropdown() {
+                return {
+                    options: [],
+                    selected: [],
+                    show: false,
+                    open() { this.show = true },
+                    close() { this.show = false },
+                    isOpen() { return this.show === true },
+                    canClick:true,
+                    select(index, event) {
+                        if (!this.canClick)
+                        {
+                            return;
+                        }
+                        if (!this.options[index].selected) {
+                        console.log(index)
+                            this.options[index].selected = true;
+                            this.options[index].element = event.target;
+                            this.selected.push(index);
+
+                        } else {
+                            this.selected.splice(this.selected.lastIndexOf(index), 1);
+                            this.options[index].selected = false
+                        }
+                        setTimeout(()=>{
+                            this.canClick=true;
+                            },100)
+                    },
+                    remove(index, option) {
+                        if (!this.canClick)
+                        {
+                            return;
+                        }
+                        this.options[option].selected = false;
+                        this.selected.splice(index, 1);
+                        setTimeout(()=>{
+                            this.canClick=true;
+                            },100)
+                    },
+                    loadOptions() {
+                        const options = document.getElementById('tags').options;
+                        for (let i = 0; i < options.length; i++) {
+                            this.options.push({
+                                value: options[i].value,
+                                text: options[i].innerText,
+                                selected: options[i].getAttribute('selected') != null ? options[i].getAttribute('selected') : false
+                            });
+                        }
+
+
+                    },
+                    selectedValues(){
+                        return this.selected.map((option)=>{
+                            return this.options[option].value;
+                        })
+                    }
+                }
+            }
 
     function today() {
       var date = document.querySelector('#date');
@@ -239,7 +318,5 @@ Description: Report creation folder
         .catch( error => {
             console.error( error );
         } );
-        //console.log(ClassicEditor.builtinPlugins.map( plugin => plugin.pluginName ));
 </script>
-
 @endsection

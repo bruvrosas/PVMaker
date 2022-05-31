@@ -22,5 +22,6 @@ class Report extends Model
     {
         return $this->belongsToMany(Tag::class);
     }
+
 }
 
