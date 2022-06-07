@@ -17,7 +17,7 @@ Description: Webpage Header
         <div class="hidden lg:flex">
             <ul class="items-center md:space-x-8 space-x-6 text-gray-900 font-semibold text-lg hidden md:flex">
                 <li class="relative group">
-                    <a href="/" >Accueil</a>
+                    <a href="{{route('index')}}" >Accueil</a>
                     <div class="w-full h-0.5 bg-transparent group-hover:bg-PVred transition-al absolute bottom-0" />
                 </li>
                 <li class="relative group">
@@ -26,12 +26,12 @@ Description: Webpage Header
                 </li>
                 @if (Auth::check())
                     <li class="relative group">
-                        <a href="#" >Mes PVs</a>
+                        <a href="{{route('folders.index')}}" >Mes PVs</a>
                         <div class="w-full h-0.5 bg-transparent group-hover:bg-PVred transition-al absolute bottom-0" />
                     </li>
                 @endif
                 <li class="relative group">
-                    <a href="/contact">Contact</a>
+                    <a href="{{route('contact')}}">Contact</a>
                     <div class="w-full h-0.5 bg-transparent group-hover:bg-PVred transition-al absolute bottom-0" />
                 </li>
                 @if (Route::has('login'))

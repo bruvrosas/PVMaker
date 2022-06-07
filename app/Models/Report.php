@@ -13,6 +13,16 @@ class Report extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'date' => 'date',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime'
+    ];
+
+    protected $dates = [
+        'date'
+    ];
+
     public function folder()
     {
         return $this->belongsTo(Folder::class);
@@ -22,6 +32,5 @@ class Report extends Model
     {
         return $this->belongsToMany(Tag::class);
     }
-
 }
 

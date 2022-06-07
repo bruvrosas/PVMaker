@@ -16,7 +16,14 @@ module.exports = {
                 /*'PVblue': '#D9E2E2',*/
                 'PVblue': '#a3bbbf',
                 'PVred': '#C63B3B',
-            }
+            },
+            maxWidth: {
+                '1/4': '25%',
+                '1/2': '300px',
+                '3/4': '75%',
+                'xxs': '10rem',
+                'xxxs': '5rem',
+              }
         },
     },
 

@@ -23,7 +23,7 @@ Description: Hamburger menu
                 {{ __('Créer un PV') }}
             </x-dropdown-link>
             @if (Auth::check())
-                <x-dropdown-link :href="route('index')" >
+                <x-dropdown-link :href="route('folders.index')" >
                     {{ __('Mes PVs') }}
                 </x-dropdown-link>
             @endif

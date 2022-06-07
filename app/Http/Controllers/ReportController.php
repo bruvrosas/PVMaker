@@ -12,6 +12,7 @@ use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use ZipArchive;
 use PDF;
 
 class ReportController extends Controller
@@ -74,17 +75,22 @@ class ReportController extends Controller
             $report->participants = $this->arrayToString($participants);
             $report->absents = $this->arrayToString($absents);
             $report->excused = $this->arrayToString($excused);
-            $report->agenda = $request->agenda;
+            if ($request->agenda == null)
+                $report->agenda = "Vide";
+            else
+                $report->agenda = $request->agenda;
             $report->folder_id = $request->folder_id;
             $report->save();
             // Handle tags
-            $tags_id = explode(",",$request->tags);
-            foreach ($tags_id as $tag_id){
-                $tag = Tag::find($tag_id);
-                $tag->reports()->attach($report->id);
+            if ($request->tags != null)
+            {
+                $tags_id = explode(",",$request->tags);
+                foreach ($tags_id as $tag_id){
+                    $tag = Tag::find($tag_id);
+                    $tag->reports()->attach($report->id);
+                }
             }
-            return redirect()->route('index');
-            //TODO redirect to folders
+            return redirect()->route('folders.index');
         }
         else{
             //Export report as PDF
@@ -101,7 +107,10 @@ class ReportController extends Controller
      */
     public function show($id)
     {
-        //
+        if (Auth::check()){
+            $report = Report::find($id);
+            return view('reports.show')->with(['report' => $report]);
+        }
     }
 
     /**
@@ -135,7 +144,41 @@ class ReportController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (Auth::check()) {
+            Report::destroy($id);
+        }
+        return redirect()->route('folders.index');
+    }
+
+    public function import($id)
+    {
+        if (Auth::check()) {
+            $report = Report::find($id);
+            return view('reports.import')->with([
+                'report'=>$report,
+                'tags' => Tag::all(),
+                'folders' => Folder::all(),
+            ]);
+        }
+    }
+
+    public function download($id)
+    {
+        $report = Report::find($id);
+        if (Auth::check() && $report->folder->user_id == Auth::user()->id){
+            $this->createReportPDF($report->title,$report->date->format('d-m-Y'),$report->start_time->format('H:i'),$report->end_time->format('H:i'),explode(';',$report->participants),explode(';',$report->absents),explode(';',$report->excused),$report->agenda);
+            return redirect()->route('folders.index');
+        }
+    }
+
+    public function compressedDownload(Request $request)
+    {
+        $tempDir = sys_get_temp_dir();
+        $file = $tempDir.'/my-pdf.zip';
+        $zip = new \ZipArchive();
+        $zip->open($file, ZipArchive::OVERWRITE);
+        $reports = Report::all();
+        dd($reports);
     }
 
     // Transforms an array into a string with semicolon separated values
@@ -273,6 +316,6 @@ class ReportController extends Controller
         PDF::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
         PDF::AddPage();
         PDF::writeHTML($html_content, true, false, true, false, '');
-        PDF::Output($title.'.pdf','D');
+        PDF::Output('PVMaker_' . $title.'.pdf','D');
     }
 }

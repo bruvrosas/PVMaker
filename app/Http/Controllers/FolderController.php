@@ -6,7 +6,12 @@ Description: Folder resource controller
 */
 namespace App\Http\Controllers;
 
+use App\Models\Folder;
+use App\Models\Report;
+use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\DocBlock\TagFactory;
 
 class FolderController extends Controller
 {
@@ -17,7 +22,17 @@ class FolderController extends Controller
      */
     public function index()
     {
-        //
+        if (Auth::check()){
+            $folders = Auth::user()->folders;
+            return view('folders.index')->with([
+                'folders' => $folders,
+                'tags' => Tag::all()
+            ]);
+        }
+        else
+        {
+            return view('auth.login');
+        }
     }
 
     /**
@@ -27,7 +42,13 @@ class FolderController extends Controller
      */
     public function create()
     {
-        //
+        if (Auth::check()){
+            return view('folders.create');
+        }
+        else
+        {
+            return view('auth.login');
+        }
     }
 
     /**
@@ -38,7 +59,11 @@ class FolderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $folder = new Folder;
+        $folder->name = $request->name;
+        $folder->user_id = Auth::user()->id;
+        $folder->save();
+        return redirect()->route('folders.index');
     }
 
     /**
@@ -60,7 +85,14 @@ class FolderController extends Controller
      */
     public function edit($id)
     {
-        //
+        if (Auth::check()){
+            $folder = Folder::find($id);
+            return view('folders.edit')->with(['folder' => $folder]);
+        }
+        else
+        {
+            return view('auth.login');
+        }
     }
 
     /**
@@ -72,7 +104,16 @@ class FolderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if (Auth::check()){
+            Folder::where(['id' => $id])->update([
+                'name'=>$request->input('name')
+            ]);
+            return redirect()->route('folders.index');
+        }
+        else
+        {
+            return view('auth.login');
+        }
     }
 
     /**
@@ -83,6 +124,15 @@ class FolderController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (Auth::check()) {
+
+            Folder::destroy($id);
+        }
+        return redirect()->route('folders.index');
+    }
+
+    public function filter(Request $request)
+    {
+        //TODO filter
     }
 }

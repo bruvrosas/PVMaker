@@ -1,7 +1,7 @@
 {{--
 Auteur: Bruno Manuel Vieira Rosas
 Date: 24.05.2022
-Description: Report creation form
+Description: Report imported form
 --}}
 
 {{-- Form inspired by: https://tailwindcomponents.com/component/input-field --}}
@@ -16,22 +16,22 @@ Description: Report creation form
             {{--Title--}}
             <div class="mb-6">
                 <label for="title" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Titre</label>
-                <input type="text" name="title" id="title" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                <input value="{{$report->title}}" type="text" name="title" id="title" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             </div>
             {{--Date--}}
             <div class="mb-6">
                 <label for="date" class="block mb-2 text-base font-semibold font-medium text-gray-900 dark:text-gray-300">Date</label>
-                <input type="date" name="date" id="date" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                <input value="{{$report->date->format('Y-m-d')}}" type="date" name="date" id="date" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             </div>
             {{--Time--}}
             <div class="grid gap-6 mb-6 lg:grid-cols-2">
                 <div>
                     <label for="start_time" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Heure de début</label>
-                    <input type="time" name="start_time" id="start_time" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                    <input value="{{$report->start_time->format('H:i')}}" type="time" name="start_time" id="start_time" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 </div>
                 <div>
                     <label for="end_time" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Heure de fin</label>
-                    <input type="time" name="end_time" id="end_time" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                    <input value="{{$report->end_time->format('H:i')}}" type="time" name="end_time" id="end_time" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                 </div>
             </div>
             {{--Participants--}}
@@ -115,7 +115,7 @@ Description: Report creation form
             {{--Agenda--}}
             <div class="mb-6 prose">
                 <label for="agenda" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Ordre du jour et points traités</label>
-                <textarea  name="agenda" id="report_editor" ></textarea>
+                <textarea  name="agenda" id="report_editor" >{{$report->agenda}}</textarea>
             </div>
                 @if (Route::has('login'))
                         @auth
@@ -125,6 +125,18 @@ Description: Report creation form
                                     <option value="{{$tag->id}}">{{$tag->name}}</option>
                                 @endforeach
                             </select>
+                            {{--Import Tags Not working--}}{{--
+                            <select x-cloak id="tags" class="hidden">
+                                @foreach($tags as $tag)
+                                    @foreach($report->tags as $reportTag)
+                                        @if($tag === $reportTag)
+                                            <option value="{{$tag->id}}" selected>{{$tag->name}}</option>
+                                        @else
+                                            <option value="{{$tag->id}}">{{$tag->name}}</option>
+                                        @endif
+                                    @endforeach
+                                @endforeach
+                            </select>--}}
                             <div class="mb-6 prose">
                                 <label for="excused" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Tags</label>
                                 <div x-data="tagDropdown()" x-init="loadOptions()" class="w-full flex flex-col">
@@ -187,7 +199,11 @@ Description: Report creation form
                                 <label for="folder" class="block mb-2 text-base font-semibold text-gray-900 dark:text-gray-300">Dossier</label>
                                 <select id="folders" name="folder_id" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                     @foreach($folders as $folder)
+                                        @if($folder->id == $report->folder->id)
+                                            <option value="{{$folder->id}}" selected>{{$folder->name}}</option>
+                                        @else
                                         <option value="{{$folder->id}}">{{$folder->name}}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
@@ -200,9 +216,11 @@ Description: Report creation form
     </div>
 </div>
 
-{{-- <script src="node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>--}}
 <script src="https://cdn.ckeditor.com/ckeditor5/34.0.0/classic/ckeditor.js"></script>
 <script>
+
+    let participants = {!! json_encode(explode(';', $report->participants))  !!};
+    console.log(participants);
     function participantsHandler() {
         return {
             fields: [],
@@ -213,9 +231,17 @@ Description: Report creation form
             },
             removeField(index) {
                 this.fields.splice(index, 1);
-                }
+            },
+            importedParticipants(){
+                participants.forEach(participant => this.fields.push({
+                participant: participant
+                }));
+            }
         }
     }
+    let participantsImporter = participantsHandler();
+    participantsImporter.importedParticipants();
+
     function absentsHandler() {
         return {
             fields: [],
@@ -303,18 +329,20 @@ Description: Report creation form
                 }
             }
 
-    function today() {
+   /* let reportDate = {!! json_encode($report->date)  !!};
+    function setDate() {
       var date = document.querySelector('#date');
       var today = new Date();
-      date.value = today.toISOString().substring(0, 10);
+      date.value = reportDate.toISOString().substring(0, 10);
     }
-    today();
+    setDate();*/
 
+    let agenda = {!! json_encode($report->agenda)  !!};
     ClassicEditor
         .create( document.querySelector( '#report_editor' ), {
             removePlugins: ['Link', 'CKFinder','Image','ImageStyle', 'ImageCaption', 'ImageToolbar', 'ImageUpload' ,'BlockQuote','EasyImage','MediaEmbed'],
             toolbar: [ 'heading','|','bold', 'italic','|','bulletedList', 'numberedList','outdent','indent', '|','insertTable','|','undo','redo' ]
-        } )
+        })
         .catch( error => {
             console.error( error );
         } );
