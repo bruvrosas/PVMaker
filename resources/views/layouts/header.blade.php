@@ -11,7 +11,7 @@ Description: Webpage Header
 <nav class="w-full py-3 bg-PVblue border-b-2 border-black border-opacity-60">
     <div class="flex items-center justify-between mx-auto xl:max-w-7xl lg:max-w-5xl md:max-w-3xl md:px-2 px-4">
         <section class="flex items-center text-gray-900 space-x-2">
-            <a href="/"><img width="100" height="96" src="{{asset("img/logo.png")}}" alt="PVMaker logo"></a>
+            <a href="{{route('index')}}"><img width="100" height="96" src="{{asset("img/logo.png")}}" alt="PVMaker logo"></a>
         </section>
         <!-- Large and above screensize menu -->
         <div class="hidden lg:flex">
